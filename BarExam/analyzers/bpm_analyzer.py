@@ -41,7 +41,7 @@ def analyze_beat(file_path):
     try:
         bpm = analyze_bpm(file_path)
 
-        similar_tracks = rap_bpm_librarys(bpm)
+        similar_tracks = rap_bpm_library(bpm)
 
         return {
             "bpm": bpm,
