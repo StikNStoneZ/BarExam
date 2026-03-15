@@ -61,7 +61,7 @@ rap_bpm_library = [
 
 def analyze_bpm(file_path):
 
-    y, sr = librosa.load(file_path)
+    y, sr = librosa.load(file_path, mono=True, duration=30, res_type="kaiser_fast")
 
     # remove silence
     y, _ = librosa.effects.trim(y)
