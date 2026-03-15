@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>BarExam</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1 class="title">BarExam</h1>
+<p class="subtitle">Bars. Beats. Breakdown. </p>
+
+<form method="POST" action="/analyze" enctype="multipart/form-data" class="upload-card">
+
+<label>Upload Beat</label>
+<input type="file" name="beat">
+
+<label>Paste Lyrics</label>
+<textarea name="lyrics" rows="10"></textarea>
+
+<button type="submit">Analyze</button>
+
+</form>
+
+
+{% if not result and not beat %}
+
+<div class="results-card">
+
+<p class="empty-message">
+The mic is quiet. Upload a beat or paste lyrics to begin.
+</p>
+
+</div>
+
+{% endif %}
+
+
+
+{% if beat %}
+
+<div class="results-card">
+
+<h2>Beat Analysis</h2>
+
+<div class="metric">
+
+<div class="metric-title">BPM</div>
+
+<div class="metric-number">
+{{ beat.bpm }} BPM
+</div>
+
+</div>
+
+
+<div class="metric">
+
+<div class="metric-title">Tempo Reference</div>
+
+<ul class="track-list">
+
+{% for track in beat.similar_tracks %}
+
+<li>{{ track }}</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+</div>
+
+{% endif %}
+
+
+
+{% if result %}
+
+<div class="results-card">
+
+<h2>Lyrics Analysis</h2>
+
+<div class="metric">
+
+<div class="metric-title tooltip">
+Vocabulary Richness ⓘ
+<span class="tooltip-text">
+Measures how varied the vocabulary is. Higher scores mean fewer repeated words and more diverse phrasing.
+</span>
+</div>
+
+<div class="metric-desc">
+How diverse the word choices are in the verse.
+</div>
+
+<div class="bar">
+<div class="fill" style="width: {{ result.vocabulary_richness * 100 }}%"></div>
+</div>
+
+<div class="metric-value">
+{{ (result.vocabulary_richness * 100)|round(1) }}%
+</div>
+
+</div>
+
+
+<div class="metric">
+
+<div class="metric-title tooltip">
+Rhyme Density ⓘ
+<span class="tooltip-text">
+Percentage of words that participate in rhyme patterns. Dense rhyme structures increase technical complexity.
+</span>
+</div>
+
+<div class="metric-desc">
+Percentage of words that participate in rhyme patterns.
+</div>
+
+<div class="bar">
+<div class="fill" style="width: {{ result.rhyme_density * 100 }}%"></div>
+</div>
+
+<div class="metric-value">
+{{ (result.rhyme_density * 100)|round(1) }}%
+</div>
+
+</div>
+
+
+<div class="metrics-row">
+
+<div class="small-metric">
+
+<div class="metric-title tooltip">
+Internal Rhymes ⓘ
+<span class="tooltip-text">
+Number of internal rhyme clusters detected inside lines, not individual rhymes.
+</span>
+</div>
+
+<div class="metric-number">
+{{ result.internal_rhyme_count }}
+</div>
+
+</div>
+
+<div class="small-metric">
+
+<div class="metric-title tooltip">
+Multisyllabic Rhymes ⓘ
+<span class="tooltip-text">
+Rhymes involving two or more syllables. A strong indicator of advanced rhyme technique.
+</span>
+</div>
+
+<div class="metric-number">
+{{ result.multisyllabic_rhyme_count }}
+</div>
+
+</div>
+
+<div class="small-metric">
+
+<div class="metric-title tooltip">
+Phrase Rhymes ⓘ
+<span class="tooltip-text">
+Rhymes formed by multi-word phrases rather than single words, often appearing in complex rhyme chains.
+</span>
+</div>
+
+<div class="metric-number">
+{{ result.phrase_rhyme_count }}
+</div>
+
+</div>
+
+</div>
+
+
+<div class="score">
+
+<span class="tooltip">
+Technical Score: {{ result.technical_complexity }}
+<span class="tooltip-text">
+Composite score calculated from rhyme density, rhyme structures, and vocabulary variation to estimate lyrical technical complexity.
+</span>
+</span>
+
+<p class="score-label">{{ result.score_label }}</p>
+
+</div>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>
