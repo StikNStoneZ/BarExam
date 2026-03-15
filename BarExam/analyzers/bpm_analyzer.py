@@ -1,33 +1,55 @@
 import librosa
+import numpy as np
 from analyzers.bpm_library import rap_bpm_library
 
 
 def analyze_bpm(file_path):
-    
-    # load only a portion of the track to save memory
-    y, sr = librosa.load(
-    file_path,
-    mono=True,
-    offset=10,       # skip first 10 seconds
-    duration=20,     # analyze next 20 seconds
-    res_type="kaiser_fast"
-    )
 
-    # remove silence at beginning/end
-    y, _ = librosa.effects.trim(y)
+    # analyze multiple small sections for stability
+    segments = [10, 25, 40]
+    tempos = []
 
-    # detect rhythmic energy
-    onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+    for offset in segments:
+        try:
 
-    # estimate tempo
-    tempo = librosa.beat.tempo(
-        onset_envelope=onset_env,
-        sr=sr
-    )
+            # very lightweight audio loading
+            y, sr = librosa.load(
+                file_path,
+                mono=True,
+                offset=offset,
+                duration=5,
+                sr=8000,
+                res_type="kaiser_fast"
+            )
 
-    bpm = round(float(tempo[0]))
+            # normalize volume
+            y = librosa.util.normalize(y)
 
-    # fix half/double tempo issue common in rap
+            # trim silence
+            y, _ = librosa.effects.trim(y)
+
+            # detect rhythmic energy
+            onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+
+            # estimate tempo
+            tempo = librosa.beat.tempo(
+                onset_envelope=onset_env,
+                sr=sr
+            )
+
+            tempos.append(float(tempo[0]))
+
+        except Exception:
+            pass
+
+    # if nothing worked
+    if not tempos:
+        return 0
+
+    # use median for stability
+    bpm = np.median(tempos)
+
+    # fix half/double tempo (common in rap beats)
     if bpm < 80:
         bpm *= 2
     elif bpm > 180:
