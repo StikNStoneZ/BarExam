@@ -1,5 +1,5 @@
 import librosa
-from analyzers.bpm_library
+from analyzers.bpm_library import rap_bpm_library
 
 
 def analyze_bpm(file_path):
