@@ -1,5 +1,5 @@
 import librosa
-from analyzers.bpm_library import get_similar_tracks
+from analyzers.bpm_library import rap_bpm_library
 
 
 def analyze_bpm(file_path):
@@ -41,7 +41,7 @@ def analyze_beat(file_path):
     try:
         bpm = analyze_bpm(file_path)
 
-        similar_tracks = get_similar_tracks(bpm)
+        similar_tracks = rap_bpm_librarys(bpm)
 
         return {
             "bpm": bpm,
