@@ -1,6 +1,9 @@
 import re
 import math
+
 from collections import defaultdict
+import nltk
+nltk.download('cmudict')
 from nltk.corpus import cmudict
 
 d = cmudict.dict()
